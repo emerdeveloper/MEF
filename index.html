@@ -7,7 +7,6 @@
 <!--Import materialize.css-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
-
 <!--Let browser know website is optimized for mobile-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
@@ -15,75 +14,164 @@
 <body>
 	<div class="row">
 		<div class="input-field col s6">
-		  <input value="Alvin125Eme" id="first_name2" type="text" class="validate">
+		  <input value="asda=Alvin125Eme+asdas-asd*444/566" id="first_name2" type="text" class="validate">
 		  <label class="active" for="first_name2">Ingresa tu Operación</label>
-		  <button class="btn waves-effect waves-light" type="submit" name="action" id="validar" onclick="getInfo()">Submit</button>
+		  <button class="btn waves-effect waves-light" type="submit" name="action" id="validar" onclick="getInfo()">Validar</button>
+		  <button class="btn waves-effect waves-light" type="submit" name="action" id="clear" onclick="clearPage()">Borrar</button>
 		</div>
 </div>
 
 
 <div class="container">
-		<div class="row">
+	<div class="row">
 	<ul class="collection with-header col s4" id="columnConstants">
 		<li class="collection-header"><h4>Constantes</h4></li>
-		<!--<li class="collection-item">Alvin</li>
-		<li class="collection-item">Alvin</li>
-		<li class="collection-item">Alvin</li>
-		<li class="collection-item">Alvin</li>-->
 	</ul>
 	<ul class="collection with-header col s4" id="columnVariables">
 		<li class="collection-header"><h4>Variables</h4></li>
-		<!--<li class="collection-item">Alvin</li>
-		<li class="collection-item">Alvin</li>
-		<li class="collection-item">Alvin</li>
-		<li class="collection-item">Alvin</li>-->
 	</ul>
-	<ul class="collection with-header  col s4">
+	<ul class="collection with-header  col s4" id="columnOperators">
 		<li class="collection-header"><h4>Operadores</h4></li>
-		<li class="collection-item">Alvin</li>
-		<li class="collection-item">Alvin</li>
-		<li class="collection-item">Alvin</li>
-		<li class="collection-item">Alvin</li>
 	</ul>
 	</div>
 </div>
 
-	<!--<script type="text/javascript" src="js/materialize.min.js"></script>-->
-	<script>
-		function getInfo(){
-			var inputInfo = document.getElementById("first_name2").value;
-			ProcessInfo(inputInfo)
+<script>
+//Global variables
+var listOperators = ['+','-','*','/'];
+
+function getInfo(){
+	var inputInfo = document.getElementById("first_name2").value;
+	ProcessInfo(inputInfo)
+}
+		
+function ProcessInfo(inputInfo){
+	var isEqual = inputInfo.split("=");
+	if(isEqual.length == 1)
+	{
+		alert("No es una cadena de aceptación!");
+		return;
+	}
+	if(isEqual.length > 2)
+	{
+		alert("No es una cadena de aceptación!");
+		return;
+	}
+	if(isEqual[0].length==0)
+	{
+		alert("No es una cadena de aceptación!");
+		return;
+	}
+	if(isEqual[1].length==0)
+	{
+		alert("No es una cadena de aceptación!");
+		return;
+	}
+	if(!isVariable(isEqual[0]))
+	{
+		alert("No es una cadena de aceptación!");
+		return;
+	}
+
+	var arrayComponet = decompositionString(isEqual[1]);
+	identifyComponet(arrayComponet);
+	/*
+	var columnConstants = document.getElementById("columnVariables")
+	createColumnConstants(columnConstants,isEqual[0])
+
+	var arrayLatters = inputInfo.split("");
+	var CurrentComponent;
+	var componentNumbers;
+
+	arrayLatters.map((data) => {
+		if(data.match('^[0-9]+$')) {//recognize numbers
+			var number = data.match('^[0-9]+$');
+			var columnConstants = document.getElementById("columnConstants")
+			createColumnConstants(columnConstants, number);
+			console.log(`Number: ${data.match('^[0-9]+$')}`);
+		}
+		if(data.match('^[aA-zZ]+$')) {//recognize letters
+			var latters = data.match('^[aA-zZ]+$');
+			var columnConstants = document.getElementById("columnVariables")
+			createColumnConstants(columnConstants, latters);	
+			console.log(`Letter: ${data.match('^[aA-zZ]+$')}`);
+		}
+		if(data.match('^[+-/+*]+$')) {//recognize operator
+			var latters = data.match('^[+-/+*]+$');
+			var columnConstants = document.getElementById("columnOperators")
+			createColumnConstants(columnConstants, latters);	
+			console.log(`Operadores: ${data.match('^[aA-zZ]+$')}`);
 		}
 		
-		function ProcessInfo(inputInfo){
-			var arrayLatters = inputInfo.split("");
-			
-			arrayLatters.map((data) => {
-				if(data.match('^[0-9]+$')) {//recognize numbers
-				var number = data.match('^[0-9]+$');
-					var columnConstants = document.getElementById("columnConstants")
-					createColumnConstants(columnConstants, number);
-					console.log(`Number: ${data.match('^[0-9]+$')}`);
-				}
-				if(data.match('^[aA-zZ]+$')) {//recognize letters
-					var latters = data.match('^[aA-zZ]+$');
-					var columnConstants = document.getElementById("columnVariables")
-					createColumnConstants(columnConstants, latters);
-					
-					console.log(`Letter: ${data.match('^[aA-zZ]+$')}`);
-				}
-			});
-			console.log(inputInfo);
-		}
 
-		function createColumnConstants(columnConstants, constant){
+	});
+	console.log(inputInfo); */
+}
+
+function identifyComponet(currenString){
+	var iscolumnVariables = document.getElementById("columnVariables")
+	var iscolumnConstants = document.getElementById("columnConstants")
+	var iscolumnOperators = document.getElementById("columnOperators")
+
+	for (let i = 0; i < currenString.length; i++) {	
+		if(isVariable(currenString[i])){		
+			createColumnConstants(iscolumnVariables, currenString[i]);
+		}else if(isConstant(currenString[i]))
+		{
+			createColumnConstants(iscolumnConstants, currenString[i]);
+		}else if(isOperator(currenString[i])){
+			createColumnConstants(iscolumnOperators, currenString[i]);
+		}
+	}
+}
+
+function decompositionString(currenString){
+	for (let i = 0; i <= listOperators.length; i++) {
+		currenString = currenString.replace(listOperators[i],","+listOperators[i]+",");
+	}
+	var currentArray = currenString.split(",");
+	return currentArray;
+}
+
+
+function isOperator(currenString){
+	var res = currenString.match('^[+-/+*]+$')
+	return res;
+}
+
+function isConstant(currenString){
+	var res = currenString.match('^[0-9]+$')
+	return res;
+}
+
+function isVariable(currenString){
+	var patt = new RegExp(/^[a-zA-Z][0-9a-zA-Z]+$/);
+	var res = patt.test(currenString);
+	return res;
+}
+
+function createColumnConstants(columnConstants, constant){
     var newel = document.createElement('li');
-		newel.classList.add("collection-item");
-    /*var elementid = document.getElementsByTagName("td").length
-    newel.setAttribute('id',elementid);*/
+	newel.classList.add("collection-item");
     newel.innerHTML = constant;
     columnConstants.appendChild(newel);
+}
+
+function clearPage(){
+	document.getElementById("first_name2").value = "";
+	deleteElement("columnConstants");
+	deleteElement("columnVariables");
+	deleteElement("columnOperators");
+}
+function deleteElement(id){
+	var columnVariables = document.getElementById(id).children;
+	while (columnVariables.length > 1) {
+		var node = columnVariables[1];
+		if (node.parentNode){
+  			node.parentNode.removeChild(node);
 		}
-	</script>
+	}
+}
+</script>
 </body>
 </html>
