@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+
+<!--
+	Creadores:
+	Harold Martinez
+	Didier Avila
+	Emerson Gonzalez
+	__________________________
+	Estudiantes Uniremington del programa ingenieria de sistemas del 7to semestre
+-->
 <html>
 <head>
 <!--Import Google Icon Font-->
@@ -16,7 +25,7 @@
 		<div class="input-field col s1"><h1></h1></div>
 
 		<div class="input-field col s10">
-		 	 <input value="asda=Alvin125Eme+asdas-asd*444/566" id="first_name2" type="text" class="validate">
+		 	 <input value="asda=Alvin125Eme+harold444/566;" id="first_name2" type="text" class="validate">
 		 	 <label class="active" for="first_name2">Ingresa tu Operación</label>
 		</div>
 		<div class="input-field col s1"><h1></h1></div>
@@ -44,81 +53,68 @@
 
 <script>
 //Global variables
-var listOperators = ['+','-','*','/'];
+var listOperators = ['+','-','*','/',';'];
 
 function getInfo(){
-	var inputInfo = document.getElementById("first_name2").value;
+	var inputInfo = document.getElementById("first_name2").value;//Toma el valor del campo de texto
 	ProcessInfo(inputInfo)
 }
-		
+
+//Procesa la información ingresada en el campo de texto para geenrar tokens, dentro se encuentran las validaciones respectivas
 function ProcessInfo(inputInfo){
+	/*Valida si la cadena de entrada comienza con letra, 
+	si no comienza con letra muestra una ventana con un mensaje de información indicando que la cadena ingresada no es valida*/
+	if (validateStringBeginwithLetter(inputInfo)){
+		alert("No es una cadena de aceptación!");
+		return;
+	}
+
+	/*Valida si la cadena de entrada tiene punto y coma (;) , 
+	si no se cumple la condición muestra una ventana con un mensaje de información indicando que la cadena ingresada no es valida */
 	if(!validateSemicolon(inputInfo))
 	{
 		alert("No es una cadena de aceptación!");
 		return;
 	}
+	/*Valida si la cadena de entrada tiene sólo un (=),  
+	si no se cumple la condición muestra una ventana con un mensaje de información indicando que la cadena ingresada no es valida*/
+	if (containsOneEqual(inputInfo)){
+		alert("No es una cadena de aceptación!");
+		return;
+	}
+	
+	/*Se genera un array de 2 posiciones, 1ro con la variable antes del igual y el 2do con la cadena después del igual,  
+	si no se cumple la condición muestra una ventana con un mensaje de información indicando que la cadena ingresada no es valida */
 	var isEqual = inputInfo.split("=");
-	if(isEqual.length == 1)
+	/*if(isEqual[1].length==0)
 	{
 		alert("No es una cadena de aceptación!");
 		return;
 	}
-	if(isEqual.length > 2)
+	if(isEqual[1].length==1)
+	{
+		alert("No es una cadena de aceptación!");
+		return;
+	}*/
+	
+	/*Valida que la cadena antes del igual sea una variable,
+	si no se cumple la condición muestra una ventana con un mensaje de información indicando que la cadena ingresada no es valida*/ 	
+	if(!isVariableBeforeEquals(isEqual[0]))
 	{
 		alert("No es una cadena de aceptación!");
 		return;
 	}
-	if(isEqual[0].length==0)
-	{
-		alert("No es una cadena de aceptación!");
-		return;
-	}
-	if(isEqual[1].length==0)
-	{
-		alert("No es una cadena de aceptación!");
-		return;
-	}
-	if(!isVariable(isEqual[0]))
-	{
-		alert("No es una cadena de aceptación!");
-		return;
-	}
-
+	//Toma la cadena que está antes del igual y la procesa, validando que sea una variable válida y la pinta en la columna de varibles
+	var arrayComponet = decompositionString(isEqual[0]);
+	identifyComponet(arrayComponet);
+	
+	//Toma la cadena que está después del igual y la procesa, validando que sea una variables válidas, constantes las pinta en la columnas respectivas
 	var arrayComponet = decompositionString(isEqual[1]);
 	identifyComponet(arrayComponet);
-	/*
-	var columnConstants = document.getElementById("columnVariables")
-	createColumnConstants(columnConstants,isEqual[0])
-
-	var arrayLatters = inputInfo.split("");
-	var CurrentComponent;
-	var componentNumbers;
-
-	arrayLatters.map((data) => {
-		if(data.match('^[0-9]+$')) {//recognize numbers
-			var number = data.match('^[0-9]+$');
-			var columnConstants = document.getElementById("columnConstants")
-			createColumnConstants(columnConstants, number);
-			console.log(`Number: ${data.match('^[0-9]+$')}`);
-		}
-		if(data.match('^[aA-zZ]+$')) {//recognize letters
-			var latters = data.match('^[aA-zZ]+$');
-			var columnConstants = document.getElementById("columnVariables")
-			createColumnConstants(columnConstants, latters);	
-			console.log(`Letter: ${data.match('^[aA-zZ]+$')}`);
-		}
-		if(data.match('^[+-/+*]+$')) {//recognize operator
-			var latters = data.match('^[+-/+*]+$');
-			var columnConstants = document.getElementById("columnOperators")
-			createColumnConstants(columnConstants, latters);	
-			console.log(`Operadores: ${data.match('^[aA-zZ]+$')}`);
-		}
-		
-
-	});
-	console.log(inputInfo); */
 }
 
+/*Toma la cadena parte de la cadena de entrada es decir lo que está antes del igual o después
+	Para recorerlo e identificar si es variable, constante y operado*/
 function identifyComponet(currenString){
 	var iscolumnVariables = document.getElementById("columnVariables")
 	var iscolumnConstants = document.getElementById("columnConstants")
@@ -126,54 +122,93 @@ function identifyComponet(currenString){
 
 	for (let i = 0; i < currenString.length; i++) {	
 		if(isVariable(currenString[i])){		
-			createColumnConstants(iscolumnVariables, currenString[i]);
+			createColumnTokens(iscolumnVariables, currenString[i]);
 		}else if(isConstant(currenString[i]))
 		{
-			createColumnConstants(iscolumnConstants, currenString[i]);
+			createColumnTokens(iscolumnConstants, currenString[i]);
 		}else if(isOperator(currenString[i])){
-			createColumnConstants(iscolumnOperators, currenString[i]);
+			createColumnTokens(iscolumnOperators, currenString[i]);
 		}
 	}
 }
 
+/*Toma la cadena parte de la cadena de entrada es decir lo que está antes del igual o después
+	Para recorrer caracter a caracter identificando las variables y constantes entre los operadores matemaicos y así
+	generar tokens, luego gener aun array con cada componente*/
 function decompositionString(currenString){
-	for (let i = 0; i <= listOperators.length; i++) {
-		currenString = currenString.replace(listOperators[i],","+listOperators[i]+",");
-	}
-	var currentArray = currenString.split(",");
+	var resultString = "";
+	var arrayLatters = currenString.split("");
+	arrayLatters.map((data) => {
+		if(data.match('^[+-/+*;]+$')) {
+			resultString += data.replace(data,","+data+",");
+		}else{
+			resultString += data;
+		}
+	});
+	
+	var currentArray = resultString.split(",");
 	return currentArray;
 }
 
-
+//Valida que sea un operador matematico
 function isOperator(currenString){
 	var res = currenString.match('^[+-/+*]+$')
 	return res;
 }
 
+//Valida que sea una constante 
 function isConstant(currenString){
 	var res = currenString.match('^[0-9]+$')
 	return res;
 }
 
+//Valida que en la cadena de en
 function isVariable(currenString){
 	var patt = new RegExp(/^[a-zA-Z][0-9a-zA-Z]+$/);
 	var res = patt.test(currenString);
 	return res;
 }
 
-function createColumnConstants(columnConstants, constant){
+//Valida que la cadena de entrada comience con una variable valida, esta es la que esta antes del igual
+function isVariableBeforeEquals(currenString){
+var patt = new RegExp(/[0-9a-zA-Z]+$/);
+	var res = patt.test(currenString);
+	return res;
+}
+
+//Valida que la cadena de entrada comience con una letra
+function validateStringBeginwithLetter(currenString){
+	return !(currenString.match(/^[a-zA-Z]/));
+}
+
+//Valida que la cadena de entrada sólo tenga un (;) punto y coma, y esté sólo al final
+function validateSemicolon(currenString){
+	return ((!new RegExp(/;/).test(currenString.substring(1, currenString.length - 1))) && (currenString.match('[;]$')));
+}
+
+//Valida que la cadena de enrtada sólo tenga un (=) igual ó que no tenga el caracter (=;)
+function containsOneEqual(currenString) {
+	return (!(new RegExp(/^[^=]*=[^=]*$/).test(currenString)) || currenString.includes("=;"))
+}
+
+
+//Se ejecuta cuando se le da click al botón Validar, y crea las celdas de las columnas y las llena con los token respectivos a cada columna
+function createColumnTokens(columnConstants, constant){
     var newel = document.createElement('li');
 	newel.classList.add("collection-item");
     newel.innerHTML = constant;
     columnConstants.appendChild(newel);
 }
 
+//Se ejecuta cuando se da click al botón borrar, el campo de texto y llama al metodo que limpia las tablas
 function clearPage(){
 	document.getElementById("first_name2").value = "";
 	deleteElement("columnConstants");
 	deleteElement("columnVariables");
 	deleteElement("columnOperators");
 }
+
+//Se ejecuta cuando se da click al botón borrar, limpia las tablas con los tokens
 function deleteElement(id){
 	var columnVariables = document.getElementById(id).children;
 	while (columnVariables.length > 1) {
@@ -183,9 +218,6 @@ function deleteElement(id){
 		}
 	}
 }
-function validateSemicolon(currenString){
-	return ((!new RegExp(/;/).test(currenString.substring(1, currenString.length - 1))) && (currenString.match('[;]$')));
-}
-</script>
+ </script>
 </body>
 </html>
