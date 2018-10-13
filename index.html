@@ -20,7 +20,8 @@
 		 </div>
 		  <div class="input-field col s1"><h1></h1></div>
 		  </div>
-		  <div class=" container row center">
+		  
+		<div class=" container row center">
 		  <button class="btn waves-effect waves-light" type="submit" name="action" id="validar" onclick="getInfo()">Validar</button>
 		  <button class="btn waves-effect waves-light" type="submit" name="action" id="clear" onclick="clearPage()">Borrar</button>
 		</div>
@@ -51,6 +52,11 @@ function getInfo(){
 }
 		
 function ProcessInfo(inputInfo){
+	if(!validateSemicolon(inputInfo))
+	{
+		alert("No es una cadena de aceptación!");
+		return;
+	}
 	var isEqual = inputInfo.split("=");
 	if(isEqual.length == 1)
 	{
@@ -176,6 +182,9 @@ function deleteElement(id){
   			node.parentNode.removeChild(node);
 		}
 	}
+}
+function validateSemicolon(currenString){
+	return ((!new RegExp(/;/).test(currenString.substring(1, currenString.length - 1))) && (currenString.match('[;]$')));
 }
 </script>
 </body>
