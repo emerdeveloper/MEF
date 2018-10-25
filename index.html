@@ -164,7 +164,7 @@ function isConstant(currenString){
 
 //Valida que en la cadena de en
 function isVariable(currenString){
-	var patt = new RegExp(/^[a-zA-Z][0-9a-zA-Z]+$/);
+	var patt = new RegExp(/^[a-zA-Z]|[0-9a-zA-Z]+$/);
 	var res = patt.test(currenString);
 	return res;
 }
