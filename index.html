@@ -99,7 +99,7 @@ function ProcessInfo(inputInfo){
 	
 	/*Valida que la cadena antes del igual sea una variable,
 	si no se cumple la condición muestra una ventana con un mensaje de información indicando que la cadena ingresada no es valida*/ 	
-	if(!isVariableBeforeEquals(isEqual[0]))
+	if(!isVariable(isEqual[0]))
 	{
 		alert("No es una cadena de aceptación!");
 		return;
@@ -164,17 +164,18 @@ function isConstant(currenString){
 
 //Valida que en la cadena de en
 function isVariable(currenString){
-	var patt = new RegExp(/^[a-zA-Z]|[0-9a-zA-Z]+$/);
+	var patt = new RegExp(/^[a-zA-Z_$][a-zA-Z_$0-9]*$/);
 	var res = patt.test(currenString);
 	return res;
 }
 
+//No se usa
 //Valida que la cadena de entrada comience con una variable valida, esta es la que esta antes del igual
-function isVariableBeforeEquals(currenString){
+/*function isVariableBeforeEquals(currenString){
 var patt = new RegExp(/[0-9a-zA-Z]+$/);
 	var res = patt.test(currenString);
 	return res;
-}
+}*/
 
 //Valida que la cadena de entrada comience con una letra
 function validateStringBeginwithLetter(currenString){
