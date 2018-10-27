@@ -57,6 +57,9 @@ var listOperators = ['+','-','*','/',';'];
 
 function getInfo(){
 	var inputInfo = document.getElementById("first_name2").value;//Toma el valor del campo de texto
+	deleteElement("columnConstants");
+	deleteElement("columnVariables");
+	deleteElement("columnOperators");
 	ProcessInfo(inputInfo)
 }
 
