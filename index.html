@@ -18,6 +18,7 @@
 
 <!--Let browser know website is optimized for mobile-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script src="js/reconocedorDescendenteGramatica.js"></script>
 </head>
 
 <body>
@@ -54,6 +55,7 @@
 <script>
 //Global variables
 var listOperators = ['+','-','*','/',';'];
+var tokenList = [];
 
 function getInfo(){
 	var inputInfo = document.getElementById("first_name2").value;//Toma el valor del campo de texto
@@ -89,16 +91,6 @@ function ProcessInfo(inputInfo){
 	/*Se genera un array de 2 posiciones, 1ro con la variable antes del igual y el 2do con la cadena después del igual,  
 	si no se cumple la condición muestra una ventana con un mensaje de información indicando que la cadena ingresada no es valida */
 	var isEqual = inputInfo.split("=");
-	/*if(isEqual[1].length==0)
-	{
-		alert("No es una cadena de aceptación!");
-		return;
-	}
-	if(isEqual[1].length==1)
-	{
-		alert("No es una cadena de aceptación!");
-		return;
-	}*/
 	
 	/*Valida que la cadena antes del igual sea una variable,
 	si no se cumple la condición muestra una ventana con un mensaje de información indicando que la cadena ingresada no es valida*/ 	
@@ -110,10 +102,16 @@ function ProcessInfo(inputInfo){
 	//Toma la cadena que está antes del igual y la procesa, validando que sea una variable válida y la pinta en la columna de varibles
 	var arrayComponet = decompositionString(isEqual[0]);
 	identifyComponet(arrayComponet);
-	
+	tokenList = arrayComponet;
+	tokenList.push("=");
+
 	//Toma la cadena que está después del igual y la procesa, validando que sea una variables válidas, constantes las pinta en la columnas respectivas
 	var arrayComponet = decompositionString(isEqual[1]);
 	identifyComponet(arrayComponet);
+	var finalTokenList = tokenList.concat(arrayComponet);
+
+	//Reconocedor descendente
+	processGrammarOnDescendingRecognizer(finalTokenList);
 }
 
 /*Toma la cadena parte de la cadena de entrada es decir lo que está antes del igual o después
