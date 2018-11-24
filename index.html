@@ -38,16 +38,19 @@
 </div>
 
 
-<div class="container">
+<div class="container" style="width: 85%">
 	<div class="row">
-	<ul class="collection with-header col s6 l4" id="columnConstants">
+	<ul class="collection with-header col s4 10" style="width: 24%" id="columnConstants">
 		<li class="collection-header"><h5>Constantes</h5></li>
 	</ul>
-	<ul class="collection with-header col  s6 l4" id="columnVariables">
+	<ul class="collection with-header col  s4 10" style="width: 24%" id="columnVariables">
 		<li class="collection-header"><h5>Variables</h5></li>
 	</ul>
-	<ul class="collection with-header  col s12 l4" id="columnOperators">
+	<ul class="collection with-header  col s4 10" style="width: 24%" id="columnOperators">
 		<li class="collection-header"><h5>Operadores</h5></li>
+	</ul>
+	<ul class="collection with-header  col s4 10" style="width: 24%" id="columnSpecialCharacters">
+		<li class="collection-header"><h5>Carácteres especiales</h5></li>
 	</ul>
 	</div>
 </div>
@@ -62,11 +65,14 @@ function getInfo(){
 	deleteElement("columnConstants");
 	deleteElement("columnVariables");
 	deleteElement("columnOperators");
+	deleteElement("columnSpecialCharacters");
 	ProcessInfo(inputInfo)
 }
 
 //Procesa la información ingresada en el campo de texto para geenrar tokens, dentro se encuentran las validaciones respectivas
 function ProcessInfo(inputInfo){
+	containsOneEqualParenthesis(inputInfo);
+	
 	/*Valida si la cadena de entrada comienza con letra, 
 	si no comienza con letra muestra una ventana con un mensaje de información indicando que la cadena ingresada no es valida*/
 	if (validateStringBeginwithLetter(inputInfo)){
@@ -120,6 +126,7 @@ function identifyComponet(currenString){
 	var iscolumnVariables = document.getElementById("columnVariables")
 	var iscolumnConstants = document.getElementById("columnConstants")
 	var iscolumnOperators = document.getElementById("columnOperators")
+	var iscolumnSpecialCharacters = document.getElementById("columnSpecialCharacters")
 
 	for (let i = 0; i < currenString.length; i++) {	
 		if(isVariable(currenString[i])){		
@@ -129,7 +136,9 @@ function identifyComponet(currenString){
 			createColumnTokens(iscolumnConstants, currenString[i]);
 		}else if(isOperator(currenString[i])){
 			createColumnTokens(iscolumnOperators, currenString[i]);
-		}
+		}else if(isSpecialCharacters(currenString[i])){
+			createColumnTokens(iscolumnSpecialCharacters, currenString[i]);
+		}	
 	}
 }
 
@@ -140,7 +149,7 @@ function decompositionString(currenString){
 	var resultString = "";
 	var arrayLatters = currenString.split("");
 	arrayLatters.map((data) => {
-		if(data.match('^[+-/+*;]+$')) {
+		if(data.match('^[+-/+*;()]+$')) {
 			resultString += data.replace(data,","+data+",");
 		}else{
 			resultString += data;
@@ -163,9 +172,16 @@ function isConstant(currenString){
 	return res;
 }
 
-//Valida que en la cadena de en
+//Valida que sea una variable
 function isVariable(currenString){
 	var patt = new RegExp(/^[a-zA-Z_$][a-zA-Z_$0-9]*$/);
+	var res = patt.test(currenString);
+	return res;
+}
+
+//Valida que sea un carácter especial
+function isSpecialCharacters(currenString){
+	var patt = new RegExp(/\(\/*|\)\/*/);
 	var res = patt.test(currenString);
 	return res;
 }
@@ -193,6 +209,25 @@ function containsOneEqual(currenString) {
 	return (!(new RegExp(/^[^=]*=[^=]*$/).test(currenString)) || currenString.includes("=;"))
 }
 
+//Valida caracteres especiales de paréntesis ()
+function containsOneEqualParenthesis(currenString) {
+	var valA = /\(\/*/g;
+	var valC = /\)\/*/g;
+	var pAbierto = valA.exec(currenString);
+	var pCerrado = valC.exec(currenString);
+
+	if(pAbierto!=null && pCerrado!=null)
+	{
+		return ((pAbierto==pCerrado)? true:false)
+	}
+	else
+	{
+		if(pAbierto==null && pCerrado==null)
+		return true
+		else
+		return false
+	}
+}
 
 //Se ejecuta cuando se le da click al botón Validar, y crea las celdas de las columnas y las llena con los token respectivos a cada columna
 function createColumnTokens(columnConstants, constant){
@@ -208,6 +243,7 @@ function clearPage(){
 	deleteElement("columnConstants");
 	deleteElement("columnVariables");
 	deleteElement("columnOperators");
+	deleteElement("columnSpecialCharacters");
 }
 
 //Se ejecuta cuando se da click al botón borrar, limpia las tablas con los tokens
