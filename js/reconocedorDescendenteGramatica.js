@@ -7,29 +7,18 @@
 	Estudiantes Uniremington del programa ingenieria de sistemas del 7to semestre
 */
 function processGrammarOnDescendingRecognizer(grammar){
-    
-   var symbolStackValues = {
-        Empty: "",
-        A: "i",
-        I: "i",
-        D: "(,i,-",
-        T: "(,i",
-        L: "+,-,;,)",
-        F: "(,i",
-        S: "*,/,;,),+,-",
-        P: "(,i",
-        Equals: "=",//Desapile y avance
-        ClosedParenthesis: ")"//Desapile y avance
-    };
-   // var a = isIdentifier("harold");
+    console.log(grammar)
+    grammar.pop();
+    console.log(grammar)
     var symbolStack = ["Empty","A"];
-    //["Empty","A", "D", "=", "I"]
     for (var i = 0; i < grammar.length; i++) {
         var stackTop = symbolStack[symbolStack.length - 1];
         var token = grammar[i];
         switch(stackTop) {
             case "Empty":
-                console.log("Borrame")
+            if(token === ";"){
+                console.log("Aceptación")
+            }                
                 break;
             case "A":
                 if(isIdentifier(token)){
@@ -62,7 +51,13 @@ function processGrammarOnDescendingRecognizer(grammar){
             }
                 break;
             case "L":
-                code block
+            if(token == "+" || token == "-"){
+                symbolStack.push("L", "T");
+            }
+            if(token == ")" || token == ";"){
+                symbolStack.pop();
+                i--;
+            }
                 break;
             case "F":
             if(isIdentifier(token) || token === "("){
@@ -70,9 +65,15 @@ function processGrammarOnDescendingRecognizer(grammar){
                 i--;
             }
                 break;
-            /*case "S":
-                code block
-                break;*/
+            case "S":
+            if(token == "+" || token == "-" || token == ")" || token == ";"){
+                symbolStack.pop();
+                i--;
+            }
+            if(token == "*" || token == "/"){
+                symbolStack.push("S", "F");
+            }
+                break;
             case "P":
             if(isIdentifier(token)){
                 symbolStack.pop();
@@ -86,14 +87,16 @@ function processGrammarOnDescendingRecognizer(grammar){
                     symbolStack.pop();
                 }
                 break;
-            /*case "ClosedParenthesis":
-                code block
-                break;*/
+            case ")":
+            if(token === "="){
+                symbolStack.pop();
+            }
+                break;
             default:
                 console.log("Error")
         }
-        console.log(symbolStack);
-        console.log(grammar);
+        console.log("Pila:" +symbolStack);
+        console.log("token:" +token);
 	}
 }
 
